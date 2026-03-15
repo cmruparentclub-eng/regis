@@ -155,7 +155,7 @@ function submitData() {
         globalData.imageName = file.name;
 
         // *** ตรวจสอบว่าใช้ URL จาก Deployment ล่าสุดของคุณ ***
-        fetch('https://script.google.com/macros/s/AKfycbyQsOujtb4gFro7Zb4QzGRncLZ-UcBjE2RIjRGSOTbjde_J35XA4XIAUFtNG7SMF-MX/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbxa5XY6NwfmAprupzgiS7NYAF_ufgPzhiiFbpKPh0Q8w1QBOqmytydvCDAE6zr7eGX6/exec', {
             method: 'POST',
             body: JSON.stringify(globalData)
         })
