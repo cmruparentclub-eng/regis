@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบลงทะเบียนและชำระเงินค่าสมุด หนังสือแบบฝึกหัด และค่าชมรมรายปี 2569 - สาธิต มรภ.เชียงใหม่</title>
+    <title>ระบบลงทะเบียนและชำระเงิน - สาธิต มรภ.เชียงใหม่</title>
     <style>
         body { font-family: 'Tahoma', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
         .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 550px; }
@@ -11,24 +11,34 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; }
         select, input { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; }
-        .btn-calc { width: 100%; padding: 15px; background-color: #2ecc71; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        #result { margin-top: 25px; padding: 20px; border-radius: 10px; display: none; background-color: #ffffff; border: 2px solid #2ecc71; }
-        .bank-info { background: #ebf5fb; padding: 15px; border-radius: 8px; border-left: 5px solid #3498db; margin: 15px 0; }
+        .btn-calc { width: 100%; padding: 15px; background-color: #2ecc71; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-calc:hover { background-color: #27ae60; }
         
-        /* สไตล์สำหรับคำเตือน Ref No. */
+        #result { margin-top: 25px; padding: 20px; border-radius: 10px; display: none; background-color: #ffffff; border: 2px solid #2ecc71; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .bank-info { background: #ebf5fb; padding: 15px; border-radius: 8px; border-left: 5px solid #3498db; margin: 15px 0; line-height: 1.6; }
+        
+        /* สไตล์สำหรับกล่อง QR Code */
+        .qr-container { text-align: center; margin: 15px 0; padding: 10px; background: #fff; border: 1px dashed #bbb; border-radius: 10px; }
+        .qr-container img { width: 220px; height: 220px; margin-bottom: 5px; }
+        
         .important-note { 
             background: #fdf2f2; border: 1px solid #f8b4b4; color: #c0392b; 
-            padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; font-weight: bold; text-align: center;
+            padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 14px; font-weight: bold; text-align: center;
         }
         
-        .btn-submit { width: 100%; padding: 15px; background-color: #e67e22; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn-submit { width: 100%; padding: 15px; background-color: #e67e22; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .btn-submit:hover { background-color: #d35400; }
+        .btn-submit:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
         #loading { display: none; text-align: center; color: #e67e22; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🏫 ระบบลงทะเบียนและชำระเงินค่าสมุด หนังสือแบบฝึกหัด และค่าชมรมรายปี 2569-สาธิต มรภ.เชียงใหม่</h2>
+    <h2>🏫 ลงทะเบียนและชำระเงิน 2569</h2>
     
     <div class="form-group">
         <label>ชื่อ-นามสกุล นักเรียน:</label>
@@ -58,27 +68,33 @@
         </select>
     </div>
 
-    <button class="btn-calc" onclick="showPaymentInfo()">ตรวจสอบยอดเงิน</button>
+    <button class="btn-calc" onclick="showPaymentInfo()">ตรวจสอบยอดเงินและรับ QR Code</button>
     
     <div id="result">
         <div class="bank-info">
             <strong>🏦 ข้อมูลบัญชีธนาคาร:</strong><br>
             ชื่อบัญชี: <b>ชมรมผู้ปกครองและครูโรงเรียนสาธิต มรภ.เชียงใหม่</b><br>
             ธนาคาร: <b>ไทยพาณิชย์ (SCB)</b> เลขที่: <b>821-417951-8</b><br>
-            <span style="color: #2c3e50;">ยอดที่ต้องโอน: <b id="totalDisplay" style="color: #1a5276; font-size: 20px;"></b></span>
+            <span style="color: #2c3e50;">ยอดโอน: <b id="totalDisplay" style="color: #1a5276; font-size: 22px;"></b></span>
         </div>
 
-        <div class="important-note" id="refNote">
-            ⚠️ สำคัญ: กรุณาระบุ <span id="refId"></span> <br>ในบันทึกช่วยจำขณะโอนเงิน
+        <div class="qr-container">
+            <div id="qrPlaceholder">กำลังสร้าง QR Code...</div>
+            <img id="qrImage" src="" alt="PromptPay QR" style="display:none;">
+            <p style="font-size: 12px; color: #666; margin-top: 5px;">สแกนด้วยแอปธนาคาร ยอดเงินจะขึ้นให้อัตโนมัติ</p>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
-            <label>📸 แนบสลิปโอนเงิน (ไฟล์รูปภาพ):</label>
+        <div class="important-note">
+            ⚠️ สำคัญ: กรุณาระบุ <span id="refId" style="text-decoration: underline;"></span> <br>ใน "บันทึกช่วยจำ" ขณะโอนเงิน
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label>📸 แนบสลิปโอนเงินเพื่อยืนยัน:</label>
             <input type="file" id="slipFile" accept="image/*">
         </div>
 
-        <div id="loading">กำลังส่งข้อมูลและอัปโหลดสลิป... โปรดรอสักครู่</div>
-        <button class="btn-submit" id="submitBtn" onclick="submitData()">ยืนยันการส่งข้อมูลและสลิป</button>
+        <div id="loading">🚀 กำลังส่งข้อมูลและสลิป... โปรดรอสักครู่</div>
+        <button class="btn-submit" id="submitBtn" onclick="submitData()">ส่งหลักฐานการโอนเงิน</button>
     </div>
 </div>
 
@@ -92,7 +108,7 @@ function showPaymentInfo() {
     
     if(!name) { alert("กรุณาระบุชื่อนักเรียน"); return; }
 
-    // คำนวณยอดเงิน (ไม่มีเศษสตางค์)
+    // คำนวณยอดเงินจำนวนเต็ม
     let discount = (siblingOrder === "2" && basePrice !== 1623 && basePrice !== 1157) ? 250 : 0;
     const total = basePrice - discount;
     const refNo = "REF" + Math.floor(100000 + Math.random() * 900000);
@@ -104,13 +120,21 @@ function showPaymentInfo() {
         refNo: refNo
     };
 
-    // แสดงยอดเงิน (จำนวนเต็ม)
+    // แสดงยอดเงิน
     document.getElementById('totalDisplay').innerText = total.toLocaleString() + " บาท";
     
-    // แสดง Ref No ในช่องคำเตือน
+    // สร้างและแสดง QR Code อัตโนมัติจากเลขบัญชีและยอดเงิน
+    const qrImg = document.getElementById('qrImage');
+    const qrPlace = document.getElementById('qrPlaceholder');
+    qrImg.src = `https://promptpay.io/8214179518/${total}.png`;
+    qrImg.style.display = 'inline-block';
+    qrPlace.style.display = 'none';
+
+    // แสดงเลข Ref No ในกล่องสีแดง
     document.getElementById('refId').innerText = "Ref No: " + refNo;
     
     document.getElementById('result').style.display = "block";
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
 }
 
 function submitData() {
@@ -130,18 +154,18 @@ function submitData() {
         globalData.imageFile = e.target.result;
         globalData.imageName = file.name;
 
-        // URL จาก Deployment ของคุณ
+        // *** ตรวจสอบว่าใช้ URL จาก Deployment ล่าสุดของคุณ ***
         fetch('https://script.google.com/macros/s/AKfycbyQsOujtb4gFro7Zb4QzGRncLZ-UcBjE2RIjRGSOTbjde_J35XA4XIAUFtNG7SMF-MX/exec', {
             method: 'POST',
             body: JSON.stringify(globalData)
         })
         .then(res => res.text())
         .then(text => {
-            alert("ลงทะเบียนและส่งสลิปสำเร็จเรียบร้อยแล้วค่ะ!");
+            alert("✅ ลงทะเบียนและส่งสลิปสำเร็จเรียบร้อยแล้วค่ะ!");
             location.reload();
         })
         .catch(err => {
-            alert("เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่");
+            alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่");
             document.getElementById('loading').style.display = "none";
             document.getElementById('submitBtn').disabled = false;
         });
