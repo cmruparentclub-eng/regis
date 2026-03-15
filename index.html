@@ -43,9 +43,8 @@
 
 <div class="card">
     <div class="logo-container">
-<div class="logo-container">
-    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc6R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKVRVVldW2hpan30h6Gbe4+1h6fLA0OT0401l1UX09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//Z" alt="Logo ชมรม">
-</div>
+        <img src="https://lh3.googleusercontent.com/d/1yW-9n7qL6Y6iB3t-8_lVl8X3Vf0n0r0N" alt="Logo ชมรม">
+    </div>
     <h2>ลงทะเบียนและชำระเงิน 2569</h2>
     <p class="sub-title">ชมรมผู้ปกครองและครูโรงเรียนสาธิต มหาวิทยาลัยราชภัฏเชียงใหม่</p>
     
@@ -73,4 +72,110 @@
         <label>ลำดับพี่น้อง:</label>
         <select id="siblingOrder">
             <option value="1">คนที่ 1 (ไม่มีส่วนลด)</option>
-            <option value="2">คนที่ 2 หรือ 3 (ลด 250
+            <option value="2">คนที่ 2 หรือ 3 (ลด 250.-)</option>
+        </select>
+    </div>
+
+    <button class="btn-calc" onclick="showPaymentInfo()">ตรวจสอบยอดเงินและรับ QR Code</button>
+    
+    <div id="result">
+        <div class="bank-info">
+            <strong>🏦 ข้อมูลบัญชีธนาคาร:</strong><br>
+            ชื่อบัญชี: <b>ชมรมผู้ปกครองและครูโรงเรียนสาธิต มรภ.เชียงใหม่</b><br>
+            ธนาคาร: <b>ไทยพาณิชย์ (SCB)</b> เลขที่: <b>821-417951-8</b><br>
+            <span style="color: #2c3e50;">ยอดโอน: <b id="totalDisplay" style="color: #1a5276; font-size: 22px;"></b></span>
+        </div>
+
+        <div class="qr-container">
+            <div id="qrPlaceholder">กำลังรอรูปภาพ QR Code จากธนาคาร...</div>
+            <img id="qrImage" src="bank-qr.jpg" alt="Bank QR" style="display:none;" onerror="this.style.display='none'; document.getElementById('qrPlaceholder').style.display='block';">
+            <p style="font-size: 12px; color: #666; margin-top: 5px;">สแกนโอนเงินผ่านแอปธนาคาร</p>
+        </div>
+
+        <div class="important-note">
+            ⚠️ สำคัญ: กรุณาระบุ <span id="refId" style="text-decoration: underline;"></span> <br>ใน "บันทึกช่วยจำ" ขณะโอนเงิน
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label>📸 แนบสลิปโอนเงินเพื่อยืนยัน:</label>
+            <input type="file" id="slipFile" accept="image/*">
+        </div>
+
+        <div id="loading">🚀 กำลังส่งข้อมูลและสลิป... โปรดรอสักครู่</div>
+        <button class="btn-submit" id="submitBtn" onclick="submitData()">ส่งหลักฐานการโอนเงิน</button>
+    </div>
+</div>
+
+<script>
+let globalData = {}; 
+
+function showPaymentInfo() {
+    const name = document.getElementById('studentName').value;
+    const basePrice = parseInt(document.getElementById('grade').value);
+    const siblingOrder = document.getElementById('siblingOrder').value;
+    
+    if(!name) { alert("กรุณาระบุชื่อนักเรียน"); return; }
+
+    let discount = (siblingOrder === "2" && basePrice !== 1623 && basePrice !== 1157) ? 250 : 0;
+    const total = basePrice - discount;
+    const refNo = "REF" + Math.floor(100000 + Math.random() * 900000);
+
+    globalData = {
+        name: name,
+        grade: document.getElementById('grade').options[document.getElementById('grade').selectedIndex].text,
+        total: total,
+        refNo: refNo
+    };
+
+    document.getElementById('totalDisplay').innerText = total.toLocaleString() + " บาท";
+    
+    // แสดงรูป QR Code ที่จะอัปโหลดขึ้นไป (ถ้ามีไฟล์)
+    const qrImg = document.getElementById('qrImage');
+    const qrPlace = document.getElementById('qrPlaceholder');
+    qrImg.style.display = 'inline-block';
+    qrPlace.style.display = 'none';
+
+    document.getElementById('refId').innerText = "Ref No: " + refNo;
+    
+    document.getElementById('result').style.display = "block";
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+}
+
+function submitData() {
+    const fileInput = document.getElementById('slipFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert("กรุณาแนบรูปสลิปโอนเงินด้วยค่ะ");
+        return;
+    }
+
+    document.getElementById('loading').style.display = "block";
+    document.getElementById('submitBtn').disabled = true;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        globalData.imageFile = e.target.result;
+        globalData.imageName = file.name;
+
+        fetch('https://script.google.com/macros/s/AKfycbxa5XY6NwfmAprupzgiS7NYAF_ufgPzhiiFbpKPh0Q8w1QBOqmytydvCDAE6zr7eGX6/exec', {
+            method: 'POST',
+            body: JSON.stringify(globalData)
+        })
+        .then(res => res.text())
+        .then(text => {
+            alert("✅ ลงทะเบียนและส่งสลิปสำเร็จเรียบร้อยแล้วค่ะ!");
+            location.reload();
+        })
+        .catch(err => {
+            alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่");
+            document.getElementById('loading').style.display = "none";
+            document.getElementById('submitBtn').disabled = false;
+        });
+    };
+    reader.readAsDataURL(file);
+}
+</script>
+
+</body>
+</html>
