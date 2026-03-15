@@ -46,8 +46,8 @@
     <div class="logo-container">
         <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc6R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKVRVVldW2hpan30h6Gbe4+1h6fLA0OT0401l1UX09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//Z" alt="โลโก้ชมรม">
     </div>
-    <h2>ลงทะเบียนและชำระเงินค่าสมุด หนังสือแบบฝึกหัด และค่าชมรมรายปี 2569</h2>
-    <p class="sub-title">โรงเรียนสาธิตมหาวิทยาลัยราชภัฏเชียงใหม่</p>
+    <h2>ลงทะเบียนและชำระเงิน 2569</h2>
+    <p class="sub-title">ชมรมผู้ปกครองและครูโรงเรียนสาธิต <br>มหาวิทยาลัยราชภัฏเชียงใหม่</p>
     
     <div class="form-group">
         <label>ชื่อ-นามสกุล นักเรียน:</label>
@@ -154,4 +154,28 @@ function submitData() {
     document.getElementById('submitBtn').disabled = true;
 
     const reader = new FileReader();
-    reader.onload =
+    reader.onload = function(e) {
+        globalData.imageFile = e.target.result;
+        globalData.imageName = file.name;
+
+        fetch('https://script.google.com/macros/s/AKfycbxa5XY6NwfmAprupzgiS7NYAF_ufgPzhiiFbpKPh0Q8w1QBOqmytydvCDAE6zr7eGX6/exec', {
+            method: 'POST',
+            body: JSON.stringify(globalData)
+        })
+        .then(res => res.text())
+        .then(text => {
+            alert("✅ ลงทะเบียนและส่งสลิปสำเร็จเรียบร้อยแล้วค่ะ!");
+            location.reload();
+        })
+        .catch(err => {
+            alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่");
+            document.getElementById('loading').style.display = "none";
+            document.getElementById('submitBtn').disabled = false;
+        });
+    };
+    reader.readAsDataURL(file);
+}
+</script>
+
+</body>
+</html>
