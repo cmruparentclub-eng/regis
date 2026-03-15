@@ -8,10 +8,10 @@
         body { font-family: 'Tahoma', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
         .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 550px; }
         .logo-container { text-align: center; margin-bottom: 15px; }
-        /* ปรับขนาดโลโก้ */
-        .logo-container img { width: 160px; height: auto; } 
-        h2 { color: #1a5276; text-align: center; border-bottom: 3px solid #1a5276; padding-bottom: 10px; margin-top: 0; font-size: 22px; }
-        .sub-title { text-align: center; color: #555; margin-top: -10px; margin-bottom: 20px; font-size: 14px; }
+        /* ปรับขนาดโลโก้ให้พอดี */
+        .logo-container img { width: 140px; height: auto; } 
+        h2 { color: #1a5276; text-align: center; border-bottom: 3px solid #1a5276; padding-bottom: 10px; margin-top: 0; font-size: 20px; }
+        .sub-title { text-align: center; color: #555; margin-top: -10px; margin-bottom: 20px; font-size: 14px; line-height: 1.4; }
         
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; }
@@ -44,10 +44,10 @@
 
 <div class="card">
     <div class="logo-container">
-        <img src="logo.jpg" alt="Logo ชมรม">
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc6R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKVRVVldW2hpan30h6Gbe4+1h6fLA0OT0401l1UX09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//Z" alt="โลโก้ชมรม">
     </div>
     <h2>ลงทะเบียนและชำระเงิน 2569</h2>
-    <p class="sub-title">ชมรมผู้ปกครองและครูโรงเรียนสาธิต มหาวิทยาลัยราชภัฏเชียงใหม่</p>
+    <p class="sub-title">ชมรมผู้ปกครองและครูโรงเรียนสาธิต <br>มหาวิทยาลัยราชภัฏเชียงใหม่</p>
     
     <div class="form-group">
         <label>ชื่อ-นามสกุล นักเรียน:</label>
@@ -77,7 +77,7 @@
         </select>
     </div>
 
-    <button class="btn-calc" onclick="showPaymentInfo()">ตรวจสอบยอดเงินและรับช่องทางโอนเงิน</button>
+    <button class="btn-calc" onclick="showPaymentInfo()">ตรวจสอบยอดเงินและวิธีชำระเงิน</button>
     
     <div id="result">
         <div class="bank-info">
@@ -90,3 +90,68 @@
         <div class="qr-container">
             <div id="qrPlaceholder">กรุณาอัปโหลดรูปภาพ QR Code (bank-qr.jpg) เพื่อแสดงผล</div>
             <img id="qrImage" src="bank-qr.jpg" alt="Bank QR" style="display:none;" onerror="this.style.display='none'; document.getElementById('qrPlaceholder').style.display='block';">
+            <p style="font-size: 12px; color: #666; margin-top: 5px;">สแกนโอนเงินผ่านแอปธนาคาร</p>
+        </div>
+
+        <div class="important-note">
+            ⚠️ สำคัญ: กรุณาระบุ <span id="refId" style="text-decoration: underline;"></span> <br>ใน "บันทึกช่วยจำ" ขณะโอนเงิน
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label>📸 แนบสลิปโอนเงินเพื่อยืนยัน:</label>
+            <input type="file" id="slipFile" accept="image/*">
+        </div>
+
+        <div id="loading">🚀 กำลังส่งข้อมูล... โปรดรอสักครู่</div>
+        <button class="btn-submit" id="submitBtn" onclick="submitData()">ส่งหลักฐานการโอนเงิน</button>
+    </div>
+</div>
+
+<script>
+let globalData = {}; 
+
+function showPaymentInfo() {
+    const name = document.getElementById('studentName').value;
+    const basePrice = parseInt(document.getElementById('grade').value);
+    const siblingOrder = document.getElementById('siblingOrder').value;
+    
+    if(!name) { alert("กรุณาระบุชื่อนักเรียน"); return; }
+
+    let discount = (siblingOrder === "2" && basePrice !== 1623 && basePrice !== 1157) ? 250 : 0;
+    const total = basePrice - discount;
+    const refNo = "REF" + Math.floor(100000 + Math.random() * 900000);
+
+    globalData = {
+        name: name,
+        grade: document.getElementById('grade').options[document.getElementById('grade').selectedIndex].text,
+        total: total,
+        refNo: refNo
+    };
+
+    document.getElementById('totalDisplay').innerText = total.toLocaleString() + " บาท";
+    
+    const qrImg = document.getElementById('qrImage');
+    const qrPlace = document.getElementById('qrPlaceholder');
+    qrImg.style.display = 'inline-block';
+    qrPlace.style.display = 'none';
+
+    document.getElementById('refId').innerText = "Ref No: " + refNo;
+    
+    document.getElementById('result').style.display = "block";
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+}
+
+function submitData() {
+    const fileInput = document.getElementById('slipFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert("กรุณาแนบรูปสลิปโอนเงินด้วยค่ะ");
+        return;
+    }
+
+    document.getElementById('loading').style.display = "block";
+    document.getElementById('submitBtn').disabled = true;
+
+    const reader = new FileReader();
+    reader.onload =
