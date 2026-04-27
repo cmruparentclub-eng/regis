@@ -17,30 +17,17 @@
         .btn-calc { width: 100%; padding: 15px; background-color: #2ecc71; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
         #result { margin-top: 25px; padding: 20px; border-radius: 10px; display: none; background-color: #ffffff; border: 2px solid #2ecc71; }
         .bank-info { background: #ebf5fb; padding: 15px; border-radius: 8px; border-left: 5px solid #3498db; margin: 15px 0; }
-        .qr-container { text-align: center; margin: 15px 0; padding: 10px; background: #fff; border: 1px dashed #bbb; border-radius: 10px; }
-        .qr-container img { width: 220px; height: auto; }
+        .account-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+        .account-number { font-size: 20px; font-weight: bold; color: #1a5276; letter-spacing: 1px; }
+        .btn-copy { padding: 8px 16px; background-color: #3498db; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+        .btn-copy:active { background-color: #2176ae; }
+        .copy-success { font-size: 13px; color: #27ae60; font-weight: bold; display: none; }
         .important-note { background: #fdf2f2; border: 1px solid #f8b4b4; color: #c0392b; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 14px; text-align: center; }
         .btn-submit { width: 100%; padding: 15px; background-color: #e67e22; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         #loading { display: none; text-align: center; color: #e67e22; margin-top: 10px; font-weight: bold; }
-
-        /* ---- สไตล์สำหรับกล่องยืนยันพี่/น้อง ---- */
-        #siblingNameBox {
-            display: none;
-            margin-top: 10px;
-            background: #eaf4fb;
-            border: 1px solid #aed6f1;
-            border-radius: 8px;
-            padding: 14px 16px;
-        }
-        #siblingNameBox p {
-            margin: 0 0 10px;
-            font-size: 13px;
-            color: #1a5276;
-        }
-        #siblingNameBox label {
-            font-size: 14px;
-            color: #1a5276;
-        }
+        #siblingNameBox { display: none; margin-top: 10px; background: #eaf4fb; border: 1px solid #aed6f1; border-radius: 8px; padding: 14px 16px; }
+        #siblingNameBox p { margin: 0 0 10px; font-size: 13px; color: #1a5276; }
+        #siblingNameBox label { font-size: 14px; color: #1a5276; }
     </style>
 </head>
 <body>
@@ -80,7 +67,6 @@
             <option value="2">คนที่ 2 หรือ 3 (ลด 250.-)</option>
         </select>
 
-        <!-- ช่องยืนยันชื่อพี่/น้อง (แสดงเมื่อเลือกส่วนลด) -->
         <div id="siblingNameBox">
             <p>⚠️ กรุณาระบุชื่อพี่หรือน้องที่เรียนในโรงเรียนเดียวกัน เพื่อยืนยันสิทธิ์ส่วนลด 250 บาท</p>
             <label>ชื่อ-นามสกุล พี่/น้อง (ที่เรียนในโรงเรียน):</label>
@@ -94,13 +80,16 @@
         <div class="bank-info">
             <strong>🏦 ข้อมูลบัญชีธนาคาร:</strong><br>
             ชื่อบัญชี: <b>ชมรมผู้ปกครองและครูโรงเรียนสาธิต มรภ.เชียงใหม่</b><br>
-            ธนาคาร: <b>ไทยพาณิชย์ (SCB)</b> เลขที่: <b>821-417951-8</b><br>
-            ยอดโอน: <b id="totalDisplay" style="color: #1a5276; font-size: 22px;"></b>
-        </div>
-
-        <div class="qr-container">
-            <div id="qrPlaceholder">กรุณาอัปโหลดรูป bank-qr.jpg</div>
-            <img id="qrImage" src="bank-qr.jpg" alt="Bank QR" style="display:none;" onerror="this.style.display='none'; document.getElementById('qrPlaceholder').style.display='block';">
+            ธนาคาร: <b>ไทยพาณิชย์ (SCB)</b><br>
+            <div class="account-row">
+                <span>เลขที่บัญชี:</span>
+                <span class="account-number">821-417951-8</span>
+                <button class="btn-copy" onclick="copyAccount()">คัดลอกเลขบัญชี</button>
+                <span class="copy-success" id="copySuccess">✔ คัดลอกแล้ว!</span>
+            </div>
+            <div style="margin-top: 10px;">
+                ยอดโอน: <b id="totalDisplay" style="color: #1a5276; font-size: 22px;"></b>
+            </div>
         </div>
 
         <div class="important-note">
@@ -127,13 +116,33 @@ function toggleSiblingName() {
     if (val !== '2') document.getElementById('siblingName').value = '';
 }
 
+function copyAccount() {
+    const accNo = '821-417951-8';
+    navigator.clipboard.writeText(accNo).then(() => {
+        showCopySuccess();
+    }).catch(() => {
+        const el = document.createElement('textarea');
+        el.value = accNo;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        showCopySuccess();
+    });
+}
+
+function showCopySuccess() {
+    const msg = document.getElementById('copySuccess');
+    msg.style.display = 'inline';
+    setTimeout(() => { msg.style.display = 'none'; }, 2500);
+}
+
 function showPaymentInfo() {
     const name = document.getElementById('studentName').value.trim();
     if (!name) { alert("กรุณาระบุชื่อนักเรียน"); return; }
 
     const siblingOrder = document.getElementById('siblingOrder').value;
 
-    // ตรวจสอบชื่อพี่/น้อง ถ้าเลือกส่วนลด
     if (siblingOrder === '2') {
         const siblingName = document.getElementById('siblingName').value.trim();
         if (!siblingName) {
@@ -158,8 +167,6 @@ function showPaymentInfo() {
     };
 
     document.getElementById('totalDisplay').innerText = total.toLocaleString() + " บาท";
-    document.getElementById('qrImage').style.display = 'inline-block';
-    document.getElementById('qrPlaceholder').style.display = 'none';
     document.getElementById('refId').innerText = "Ref No: " + refNo;
     document.getElementById('result').style.display = "block";
     document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
@@ -177,7 +184,7 @@ function submitData() {
     reader.onload = function(e) {
         globalData.imageFile = e.target.result;
         globalData.imageName = file.name;
-        fetch('https://script.google.com/macros/s/AKfycbxEfRL_UW5BXVv0ehg161WNOhJixSVp-_dghtTxeZ96hFy0XOxiWNe46uLer9HW9J0/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbyORWVvDZCg3YhxmBPRIBXpyUZxs3niqfYp6caNUe6a_fXPvHCObbXdtb_orPyUgZe_/exec', {
             method: 'POST',
             body: JSON.stringify(globalData)
         })
