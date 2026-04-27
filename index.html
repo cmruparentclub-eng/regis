@@ -177,7 +177,7 @@ function submitData() {
     reader.onload = function(e) {
         globalData.imageFile = e.target.result;
         globalData.imageName = file.name;
-        fetch('https://script.google.com/macros/s/AKfycbyA9Yn17b9E4dVUujmTXnW1LkcyXOBYUmwafXKU_FZNMN9e8FFqdLPJb_5ZJWRq36a2/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbxMSPEWq2CP-huraqoCfXHgvZRfEsM_KuJsx4QiMOrvECZSaA0Nd24139Nl9tVI4yP6/exec', {
             method: 'POST',
             body: JSON.stringify(globalData)
         })
